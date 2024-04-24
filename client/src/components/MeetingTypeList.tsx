@@ -3,20 +3,21 @@ import HomeCard from "./HomeCard"
 import { useNavigate } from "react-router-dom";
 import MeetingModal from "./MeetingModal";
 import { UserContext } from "@/context/usercontext/UserContext";
-
-
+import { RoomContext } from "@/context/roomcontext/RoomContext";
 
 
 const MeetingTypeList = () => {
-    // const { user } = useContext(UserContext);
-    // console.log({user})
+    const { userState } = useContext(UserContext);
+    const {webSocketClient} = useContext(RoomContext)
+    const {userInfo: {username}} = userState
     const navigate = useNavigate();
     const [meetingState, setMeetingState] = useState<
     'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined
   >(undefined);
 
   const createMeeting = () => {
-    
+    webSocketClient.emit("create-room", username);
+    console.log('user in meeting list --->>', userState)
   }
 
   return (

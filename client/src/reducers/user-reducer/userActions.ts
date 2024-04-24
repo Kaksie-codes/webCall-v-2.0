@@ -7,8 +7,8 @@ export const USER_ACTIONS = {
     SET_AUTH: "is-auth",
 } as const;
 
-export const setAuthPageModeAction = (mode: string) => ({
-    type: USER_ACTIONS.SET_AUTH_PAGE_MODE,
+export const setAuthPageModeAction = (mode: string) => ({ 
+    type: USER_ACTIONS.SET_AUTH_PAGE_MODE, 
     payload: { mode } as { mode: string } // Specify the type of payload
 });
 

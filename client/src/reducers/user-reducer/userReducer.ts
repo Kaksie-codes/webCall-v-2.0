@@ -65,7 +65,7 @@ export const userReducer = (state: InitialUserState, action: UserAction): Initia
         case USER_ACTIONS.SET_USER_INFO:
             return {
                 ...state,
-                userInfo: action.payload.userInfo
+                userInfo: action.payload.userInfo 
             };
         case USER_ACTIONS.SET_AUTH:
             return {
@@ -86,3 +86,4 @@ export const userReducer = (state: InitialUserState, action: UserAction): Initia
 };
 
 
+ 

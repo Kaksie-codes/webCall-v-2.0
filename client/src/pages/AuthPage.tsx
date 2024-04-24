@@ -32,7 +32,7 @@ const containerVariants = {
 };
 
 const AuthPage = () => {
-    const { state, dispatchUser } = useContext(UserContext);
+    const { userState, userDispatch } = useContext(UserContext);
 
     return (
         <div className="grid place-items-center min-h-screen">
@@ -41,13 +41,13 @@ const AuthPage = () => {
                 <p className="text-[26px] text-white font-extrabold max-sm:hidden">webCall</p>
             </Link>
             <div className="max-h-[85vh] bg-white relative overflow-hidden w-[90vw] xl:w-[70vw] max-w-[500px] lg:max-w-[1000px] px-5 py-8 rounded-[15px] shadow-lg">
-                <div className={`hidden lg:block absolute top-0 ${state.authPageMode == 'sign-in' ? 'translate-x-full' : 'translate-x-0'} -left-[50%] w-full h-full bg-gradient-to-l from-blue-400 to-blue-600 z-20 transform  transition duration-1000 ease-in-out`}></div>
+                <div className={`hidden lg:block absolute top-0 ${userState.authPageMode == 'sign-in' ? 'translate-x-full' : 'translate-x-0'} -left-[50%] w-full h-full bg-gradient-to-l from-blue-400 to-blue-600 z-20 transform  transition duration-1000 ease-in-out`}></div>
                 <div className="w-full h-full flex items-center gap-12 justify-between  px-8">
                     <SignIn />
                     <SignUp />
                 </div>
                 <AnimatePresence>
-                    {state.authPageMode === 'sign-in' && (
+                    {userState.authPageMode === 'sign-in' && (
                         <div className="hidden lg:flex lg:top-0 lg:right-0 lg:z-50 absolute px-12  place-content-center h-full w-[50%]">
                             <AnimationWrapper                                
                                 elementKey="sign-in"  
@@ -65,7 +65,7 @@ const AuthPage = () => {
                                     <motion.button
                                         variants={itemVariants}
                                         className="btn-dark"                                        
-                                        onClick={() => dispatchUser(setAuthPageModeAction('sign-up'))}
+                                        onClick={() => userDispatch(setAuthPageModeAction('sign-up'))}
                                     >
                                         Join us today
                                     </motion.button>
@@ -73,7 +73,7 @@ const AuthPage = () => {
                             </AnimationWrapper>
                         </div>
                     )}
-                    {state.authPageMode === 'sign-up' && (
+                    {userState.authPageMode === 'sign-up' && (
                         <div className="hidden lg:block lg:top-0 lg:left-0 lg:z-50 absolute px-12 h-full w-[50%]">
                             <AnimationWrapper 
                                 elementKey="sign-up"                                
@@ -88,7 +88,7 @@ const AuthPage = () => {
                                     <motion.button
                                         variants={itemVariants} 
                                         className="btn-dark"                                        
-                                        onClick={() => dispatchUser(setAuthPageModeAction('sign-in'))}
+                                        onClick={() => userDispatch(setAuthPageModeAction('sign-in'))}
                                     >
                                         Log in
                                     </motion.button>

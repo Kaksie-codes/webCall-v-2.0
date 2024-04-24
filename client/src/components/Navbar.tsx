@@ -8,8 +8,8 @@ import UserNavigation from "./UserNavigation";
 
 
 const Navbar = () => {
-  const { state, dispatchUser } = useContext(UserContext);
-  const { isAuthenticated, userInfo:{username, fullname, profileImg} } = state;
+  const { userState, userDispatch} = useContext(UserContext);
+  const { isAuthenticated, userInfo:{username, fullname, profileImg} } = userState;
   const navigate = useNavigate();
   const navPanelRef = useRef<HTMLDivElement>(null);   
  
@@ -57,7 +57,7 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center justify-center gap-5">
                 <button onClick={() => {
-                  dispatchUser(setAuthPageModeAction('sign-in'));
+                  userDispatch(setAuthPageModeAction('sign-in'));
                   navigate('/auth')
                   }}
                   className='whitespace-nowrap text-white rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80 bg-blue-1'
@@ -65,7 +65,7 @@ const Navbar = () => {
                   Sign In
                 </button>
                 <button onClick={() => {
-                  dispatchUser(setAuthPageModeAction('sign-up'));
+                  userDispatch(setAuthPageModeAction('sign-up'));
                   navigate('/auth')
                   }}
                   className='whitespace-nowrap hidden md:block text-blue-1 rounded-full py-3 px-6 text-xl capitalize hover:bg-opacity-80 bg-white'

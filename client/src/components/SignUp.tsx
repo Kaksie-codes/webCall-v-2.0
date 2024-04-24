@@ -9,7 +9,7 @@ import { setAuthPageModeAction } from "@/reducers/user-reducer/userActions";
 
 
 const SignUp = () => {
-  const { state, dispatchUser } = useContext(UserContext);  
+  const { userState, userDispatch } = useContext(UserContext);  
   const [isLoading, setIsloading] = useState(false);
 //   const { userInfo, verified, authPageMode } = state;    
 
@@ -106,7 +106,7 @@ const SignUp = () => {
                   password:"", 
                   passwordCheck:""}) 
               setTimeout(() => {                      
-                    dispatchUser(setAuthPageModeAction('sign-in'))
+                userDispatch(setAuthPageModeAction('sign-in'))
               }, 3000)               
           }     
       }catch(err){
@@ -115,7 +115,7 @@ const SignUp = () => {
       }    
   }
   return (
-    <div className={`lg:w-[45%] lg:block w-full ${state.authPageMode == 'sign-up' ? 'block' : 'hidden'}`}>
+    <div className={`lg:w-[45%] lg:block w-full ${userState.authPageMode == 'sign-up' ? 'block' : 'hidden'}`}>
                     <AnimationWrapper  initial={{ opacity: 0 }} 
                         elementKey="sign-up" 
                                 animate={{ opacity: 1 }} 

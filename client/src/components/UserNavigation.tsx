@@ -6,15 +6,15 @@ import { setAuthAction, setUserAction } from "@/reducers/user-reducer/userAction
 
 
 const UserNavigation = () => {
-    const { state, dispatchUser } = useContext(UserContext);
-    const { isAuthenticated, userInfo:{username} } = state;
+    const { userState, userDispatch } = useContext(UserContext);
+    const { isAuthenticated, userInfo:{username} } = userState;
     
     const navigate = useNavigate();
 
     const signOutUser = async () => {
         try{
             await fetch('/api/auth/signout');
-            dispatchUser(setUserAction({
+            userDispatch(setUserAction({
                 fullname: "",
                 profileImg: "",
                 role: "user",
@@ -23,7 +23,7 @@ const UserNavigation = () => {
                 username,
                 isVerified: false
               }));     
-            dispatchUser(setAuthAction(false));       
+              userDispatch(setAuthAction(false));       
             navigate('/');
         }catch(err){            
             console.log('error >>', err)

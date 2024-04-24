@@ -11,6 +11,7 @@ import PersonalRoomPage from './pages/PersonalRoomPage'
 import PrivateRoute from './components/PrivateRoute'
 import LandingPage from './pages/LandingPage'
 import UserVerificationPage from './pages/UserVerificationPage'
+import RoomPage from "./pages/RoomPage"
 
 
 function App() {  
@@ -21,6 +22,7 @@ function App() {
       <Routes>
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/auth' element={<AuthPage/>}/>
+          <Route path='/room/:roomId' element={<RoomPage/>}/>
           <Route path='users/:id/verify/:token' element={<UserVerificationPage/>}/>
 
                  {/*Protected Routes  */}

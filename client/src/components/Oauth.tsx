@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Oauth = () => {
-    const { state, dispatchUser } = useContext(UserContext);  
+    const { userDispatch } = useContext(UserContext);  
     const navigate = useNavigate(); 
     const [isLoading, setIsloading] = useState<boolean>(false); 
 
@@ -34,7 +34,7 @@ const Oauth = () => {
                 toast.success(message);
                 const {fullname, profileImg, role, userId, username, verified, email } = user
                 setTimeout(() => {
-                    dispatchUser(setUserAction({
+                    userDispatch(setUserAction({
                         fullname,
                         profileImg,
                         role,
@@ -43,7 +43,7 @@ const Oauth = () => {
                         username,
                         isVerified: verified
                       }));
-                      dispatchUser(setAuthAction(true));
+                      userDispatch(setAuthAction(true));
                       navigate('/home');
                 }, 3000)
             }            

@@ -1,38 +1,39 @@
-import Loader from "@/components/Loader";
-import { setAuthAction, setUserAction } from "@/reducers/user-reducer/userActions";
-import { INITIAL_USER_STATE, userReducer } from "@/reducers/user-reducer/userReducer";
-import { ReactNode, createContext, useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// Import necessary modules and components
+import Loader from "@/components/Loader"; // Component for displaying loading animation
+import { setAuthAction, setUserAction } from "@/reducers/user-reducer/userActions"; // Action creators for setting authentication and user data
+import { INITIAL_USER_STATE, userReducer } from "@/reducers/user-reducer/userReducer"; // Initial state and reducer for managing user data
+import { ReactNode, createContext, useEffect, useReducer, useState } from "react"; // Necessary React imports for creating context and managing state
+import { useNavigate } from "react-router-dom"; // Hook for navigation within React Router
 
+// Define interface for props passed to UserProvider component
 interface RoomProviderProps {
-    children: ReactNode; 
+    children: ReactNode; // Children elements passed to UserProvider
 }
 
+// Create context for user data
 export const UserContext = createContext<any | null>(null);
 
-
+// Define UserProvider component
 export const UserProvider = ({children}: RoomProviderProps) => {
-    const navigate = useNavigate();
-    const [state, dispatchUser] = useReducer(userReducer, INITIAL_USER_STATE);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const navigate = useNavigate(); // Hook for navigating within React Router
+    const [userState, userDispatch] = useReducer(userReducer, INITIAL_USER_STATE); // State and dispatch function for managing user data
+    const [loading, setLoading] = useState(true); // State for managing loading state
 
-    console.log({state})
-    // console.log('isAuthenticated: >>>', state.isAuthenticated)
+    // Function to read authentication cookies
     const readCookies = async () => {        
         try {
-            // Submit the form data
+            // Submit request to server to read cookies
             const res = await fetch(`/api/auth/read-cookies`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },                    
             });
-            const result = await res.json();           
-            console.log('reading cookie')
+            const result = await res.json(); // Parse response JSON           
             if (result.success === false) {
-                console.log(result.message);
-                // setLoading(false); // Set loading to false when authentication data is retrieved
+                console.log(result.message); // Log error message if cookie reading fails
             } else {
+                // Extract user data from response and dispatch actions to set user and authentication data
                 const { fullname, userId, username, role, verified, profileImg, email } = result.userData
-                dispatchUser(setUserAction({
+                userDispatch(setUserAction({
                     fullname,
                     profileImg,
                     role,
@@ -40,39 +41,38 @@ export const UserProvider = ({children}: RoomProviderProps) => {
                     email,
                     username,
                     isVerified: verified
-                  }));
-                  dispatchUser(setAuthAction(true));
-                //   setLoading(false); // Set loading to false when authentication data is retrieved
-                  
-            // }
-        }
-    }catch(err:any) {
-        console.log('backend error >>', err.message);
-        // toast.error(err?.data?.message)
-    }finally{
-        setLoading(false); 
-    }       
-}
+                }));
+                userDispatch(setAuthAction(true)); // Set authentication to true               
+            }
+        } catch(err:any) {
+            console.log('backend error >>', err.message); // Log backend error message if request fails       
+        } finally {
+            setLoading(false); // Set loading to false after cookie reading process completes
+        }       
+    }
 
-    
+    // Effect hook to trigger cookie reading when navigation changes
     useEffect(() => {
         readCookies();
     }, [navigate]); 
 
+    // Render loading state while fetching authentication data
     if (loading) {
-        // Render loading state while fetching authentication data
         return (
-        <div className="h-screen w-screen grid place-items-center bg-dark-1 ">
-            <Loader/>
-        </div>
+            <div className="h-screen w-screen grid place-items-center bg-dark-1 ">
+                <Loader/>
+            </div>
         );
     }
 
+    // Context values containing user data and loading state
     const contextValues = {
-        state,
+        userState,
         loading,
-        dispatchUser
+        userDispatch
     }
+
+    // Provide context with user data to children components
     return (
         <UserContext.Provider value={contextValues}>
             {children}

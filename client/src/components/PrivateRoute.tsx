@@ -3,8 +3,8 @@ import { useContext } from "react";
 import { Outlet, Navigate } from "react-router-dom"
 
 const PrivateRoute = () => {
-    const { state } = useContext(UserContext);
-    const { isAuthenticated } = state;
+    const { userState } = useContext(UserContext);
+    const { isAuthenticated } = userState;
 
     // console.log("private route auth --->> ", isAuthenticated);
 

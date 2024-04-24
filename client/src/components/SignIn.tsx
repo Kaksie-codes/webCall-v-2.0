@@ -9,7 +9,7 @@ import AnimationWrapper from "./animation/AnimationWrapper";
 import { setAuthAction, setUserAction } from "@/reducers/user-reducer/userActions";
 
 const SignIn = () => {
-  const { state, dispatchUser } = useContext(UserContext);  
+  const { userState, userDispatch } = useContext(UserContext);  
   const navigate = useNavigate();  
   const [isLoading, setIsloading] = useState(false);    
   // const { userInfo: { isVerified }, authPageMode } = state; 
@@ -88,7 +88,7 @@ const handleSubmit = async (e: any) => {
           // console.log('User from backend:', user);
           // console.log('Profile image from backend:', profileImg);
         
-        dispatchUser(setUserAction({
+          userDispatch(setUserAction({
           fullname,
           profileImg,
           role,
@@ -97,7 +97,7 @@ const handleSubmit = async (e: any) => {
           username,
           isVerified: verified
         }));
-        dispatchUser(setAuthAction(true));
+        userDispatch(setAuthAction(true));
         navigate('/home');
       }
   } catch (err) {
@@ -108,7 +108,7 @@ const handleSubmit = async (e: any) => {
   }
 }
   return (
-<div className={` w-full lg:w-[45%]  ${state.authPageMode == 'sign-in' ? 'block' : 'hidden'} lg:block text-black `}>
+<div className={` w-full lg:w-[45%]  ${userState.authPageMode == 'sign-in' ? 'block' : 'hidden'} lg:block text-black `}>
                     <AnimationWrapper                                 
                                 elementKey="sign-in" 
                                 initial={{ opacity: 0 }} 
