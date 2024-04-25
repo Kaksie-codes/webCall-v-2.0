@@ -6,7 +6,7 @@ import SpeakerLayout from "./SpeakerLayout";
 const CallLayout = ({layout}: {layout:CallLayoutType}) => {
     switch (layout) {
         case 'grid':
-          return <PaginatedGridLayout />;
+          return <PaginatedGridLayout numChildren={4}/>;
         case 'speaker-right':
           return <SpeakerLayout participantsBarPosition="left" />;
         default:

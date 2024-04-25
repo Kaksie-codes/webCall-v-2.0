@@ -82,6 +82,9 @@
 /* =============================== */
 
 @layer utilities {
+  .max-w-large {
+    width: min(1400px, 90vw);
+  }
   .flex-center {
     @apply flex justify-center items-center;
   }

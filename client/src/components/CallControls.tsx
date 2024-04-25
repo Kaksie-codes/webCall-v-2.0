@@ -3,6 +3,7 @@ import { FaMicrophone } from "react-icons/fa";
 import { BsRecordCircle } from "react-icons/bs";
 import { BiSolidMicrophoneOff } from "react-icons/bi";
 import { IoVideocamOutline, IoVideocamOffOutline } from "react-icons/io5";
+import { AiOutlineMessage } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import EndCallButton from "./EndCallButton";
 import ChangeOrientation from "./ChangeOrientation";
@@ -11,6 +12,7 @@ import { Users } from "lucide-react";
 const CallControls = ({onLeave, setLayout, setShowParticipants}: {onLeave:() => void, setLayout:any, setShowParticipants:any}) => {
     const [audio, setAudio] = useState(false);
     const [video, setVideo] = useState(false);
+    const [viewChats, setViewChats] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [isSharingScreen, setIsSharingScreen] = useState(false);
     const [recordTime, setRecordTime] = useState<number>(0);
@@ -111,15 +113,15 @@ const CallControls = ({onLeave, setLayout, setShowParticipants}: {onLeave:() => 
             <Users size={30} className="text-white" />
           </div>
         </button>  
-        <div onClick={() => setAudio(!audio)}>
+        <div onClick={() => setViewChats(!viewChats)}>
             {
-                audio ? (
+                viewChats ? (
                     <div className="p-3 text-red rounded-full bg-dark-1 cursor-pointer">
-                        <FaMicrophone size={25}/>
+                        <AiOutlineMessage size={25}/>
                     </div>
                 ) : (
                     <div className="p-3 rounded-full bg-dark-1 cursor-pointer">
-                        <BiSolidMicrophoneOff size={25}/>
+                        <AiOutlineMessage size={25}/>
                     </div>
                 )
             }
