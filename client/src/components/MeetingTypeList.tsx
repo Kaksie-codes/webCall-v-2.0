@@ -16,6 +16,7 @@ const MeetingTypeList = () => {
   >(undefined);
 
   const createMeeting = () => {
+    console.log('user in meeting list --->>', username)
     webSocketClient.emit("create-room", username);
     console.log('user in meeting list --->>', userState)
   }

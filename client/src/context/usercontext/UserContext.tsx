@@ -70,7 +70,7 @@ export const UserProvider = ({children}: RoomProviderProps) => {
         userState,
         loading,
         userDispatch
-    }
+    } 
 
     // Provide context with user data to children components
     return (
