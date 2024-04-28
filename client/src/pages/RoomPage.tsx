@@ -2,7 +2,7 @@ import MeetingRoom from "@/components/MeetingRoom";
 import MeetingSetup from "@/components/MeetingSetup";
 import { RoomContext } from "@/context/roomcontext/RoomContext";
 import { UserContext } from "@/context/usercontext/UserContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, createContext } from "react";
 import { useParams } from "react-router-dom";
 
 
@@ -10,7 +10,7 @@ const RoomPage = () => {
   const { roomId } = useParams(); 
   const [isSetUpComplete, setIsSetupComplete] = useState<boolean>(false);
   const { 
-    webSocketClient, 
+    webSocketClient,
     me, 
     stream, 
     peers, 
@@ -23,6 +23,8 @@ const RoomPage = () => {
 
 const { userState } = useContext(UserContext);    
 const {userInfo: {username, userId}} = userState;
+
+const VideoContext = createContext<any | null>(null);
 
 
   useEffect(() => { 
@@ -38,16 +40,20 @@ const {userInfo: {username, userId}} = userState;
     
 }, [roomId, me, webSocketClient]); // Specifying roomId, me, and webSocketClient as dependencies to re-run the effect when they change
 
+
+
   return (
-    <main className="h-screen w-full flex items-center justify-center gap-4">
-      {
-        isSetUpComplete ? (
-          <MeetingSetup/>
-        ) : (
-          <MeetingRoom/>
-        )
-      }
-    </main>
+    <VideoContext.Provider value={{}}>
+      <main className="h-screen w-full flex items-center justify-center gap-4">
+        {
+          !isSetUpComplete ? (
+            <MeetingSetup/>
+          ) : (
+            <MeetingRoom/>
+          )
+        }
+      </main>
+    </VideoContext.Provider>
   )
 }
 

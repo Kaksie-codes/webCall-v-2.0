@@ -5,7 +5,7 @@ export const USER_ACTIONS = {
     SET_VERIFIED: "set-verified",
     SET_AUTH_PAGE_MODE: "auth-page-mode",
     SET_AUTH: "is-auth",
-} as const;
+} as const; 
 
 export const setAuthPageModeAction = (mode: string) => ({ 
     type: USER_ACTIONS.SET_AUTH_PAGE_MODE, 

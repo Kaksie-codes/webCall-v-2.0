@@ -49,7 +49,7 @@ export type RoomAction =
     | {
           type: typeof ROOM_ACTIONS.ADD_HISTORY;
           payload: { history: Message[] };
-      }
+      } 
     | {
           type: typeof ROOM_ACTIONS.TOGGLE_CHAT_VISIBILITY;
           payload: { isOpen: boolean };

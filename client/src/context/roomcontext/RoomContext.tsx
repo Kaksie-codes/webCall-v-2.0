@@ -23,7 +23,22 @@ export const RoomProvider = ({ children }: RoomProviderProps) => {
     const navigate = useNavigate();
     const [me, setMe] = useState<Peer | null>(null); 
     const [stream, setStream] = useState<MediaStream | null>(null);    
-    const [roomState, roomDispatch] = useReducer(roomReducer, INITIAL_ROOM_STATE); 
+    const [roomState, roomDispatch] = useReducer(roomReducer, INITIAL_ROOM_STATE);
+    const [audioEnabled, setAudioEnabled] = useState<boolean>(true);
+    const [videoEnabled, setVideoEnabled] = useState<boolean>(true); 
+
+
+    // Function to toggle audio state
+    const toggleAudio = () => {
+        setAudioEnabled(prevState => !prevState);
+    };
+
+    // Function to toggle video state
+    const toggleVideo = () => {
+        setVideoEnabled(prevState => !prevState);
+    };
+
+    
     
     const [screenSharingId, setScreenSharingId] = useState<string>('');
     const [roomId, setRoomId] = useState<string>("")
@@ -85,67 +100,114 @@ export const RoomProvider = ({ children }: RoomProviderProps) => {
         roomDispatch(toggleChatAction(!roomState.chat.isChatOpen));        
     }
 
-    
-
-    useEffect(() => { 
+    useEffect(() => {
         const peer = new Peer(userId);
         setMe(peer);
-   }, [])
+    }, [])
 
-   useEffect(() => {   
-    if(me !== null){
-        try {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then((stream) => {
-                setStream(stream);
-
-                me.on("call", (call) => {
-                    const {username} = call.metadata;
-                    roomDispatch(addPeerNameAction(call.peer, username));
-                    console.log(`receiving call from peer already in the room ------>>`, call)
-                    call.answer(stream);
-                    call.on('stream', (peerStream) => {
-                        roomDispatch(addPeerStreamAction(call.peer, peerStream));
-                    })
+    useEffect(() => {         
+        if(me !== null){
+            try {
+                navigator.mediaDevices.getUserMedia({video:videoEnabled, audio:audioEnabled})
+                .then((stream) => {
+                    setStream(stream);
                 })
+            } catch(error){
+                console.log(error);
+            }
 
-                webSocketClient.on("user-joined", ({ peerId }) => {
-                    console.log('new user joined ---->>', peerId);
-                    const call = me.call(peerId, stream, {
-                        metadata:{
-                            username,
-                        }
-                    });
-                    call.on("stream", (peerStream) => {
-                        console.log('calling the new peer --->>', peerStream);
-                        roomDispatch(addPeerStreamAction(peerId, peerStream)); 
-                    })
-                })                    
-            })
-        } catch(error) {
-            console.log(error);
-        }
+            webSocketClient.on('room-created', enterRoom); 
+            webSocketClient.on('get-roomies', getRoomies); 
+            webSocketClient.on("user-disconnected", removePeer);         
+            webSocketClient.on("user-started-sharing", (peerId) => setScreenSharingId(peerId)); 
+            webSocketClient.on("user-stopped-sharing", () => setScreenSharingId("")); 
+            webSocketClient.on("message-created", addMessage); 
+            webSocketClient.on("get-messages", addHistory); 
 
-    webSocketClient.on('room-created', enterRoom); 
-    webSocketClient.on('get-roomies', getRoomies); 
-    webSocketClient.on("user-disconnected", removePeer);         
-    webSocketClient.on("user-started-sharing", (peerId) => setScreenSharingId(peerId)); 
-    webSocketClient.on("user-stopped-sharing", () => setScreenSharingId("")); 
-    webSocketClient.on("message-created", addMessage); 
-    webSocketClient.on("get-messages", addHistory); 
+            return () => {
+                webSocketClient.disconnect();
+                me.destroy();
+            };
+        } 
+   }, [me, audioEnabled, videoEnabled])
 
-    // me.on('open', (id) => {
-    //     console.log('My peer ID is: ' + id);
-    //     webSocketClient.emit('join-room', { roomId, peerId: id }); 
-    // });
+   useEffect(() => { 
+    if (!me) return;
+    if (!stream) return; 
 
-    // Cleanup function to disconnect WebSocket client and destroy PeerJS instance when component unmounts
-    return () => {
-        webSocketClient.disconnect();
-        me.destroy();
-    };
-    } 
-}, [me, webSocketClient, username]);    
+    me.on("call", (call) => {
+        const {username} = call.metadata;
+        roomDispatch(addPeerNameAction(call.peer, username));
+        console.log(`receiving call from peer already in the room ------>>`, call)
+        call.answer(stream);
+        call.on('stream', (peerStream) => {
+            roomDispatch(addPeerStreamAction(call.peer, peerStream));
+        })
+    })
+
+    webSocketClient.on("user-joined", ({ peerId }) => {
+        console.log('new user joined ---->>', peerId);
+        const call = me.call(peerId, stream, {
+            metadata:{
+                username,
+            }
+        });
+        call.on("stream", (peerStream) => {
+            console.log('calling the new peer --->>', peerStream);
+            roomDispatch(addPeerStreamAction(peerId, peerStream)); 
+        })
+    }) 
+
+    // if(me !== null){
+    //     try {
+    //         navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+    //         .then((stream) => {
+    //             // console.log('original stream', stream);
+    //             setStream(stream);
+
+    //             me.on("call", (call) => {
+    //                 const {username} = call.metadata;
+    //                 roomDispatch(addPeerNameAction(call.peer, username));
+    //                 console.log(`receiving call from peer already in the room ------>>`, call)
+    //                 call.answer(stream);
+    //                 call.on('stream', (peerStream) => {
+    //                     roomDispatch(addPeerStreamAction(call.peer, peerStream));
+    //                 })
+    //             })
+
+    //             webSocketClient.on("user-joined", ({ peerId }) => {
+    //                 console.log('new user joined ---->>', peerId);
+    //                 const call = me.call(peerId, stream, {
+    //                     metadata:{
+    //                         username,
+    //                     }
+    //                 });
+    //                 call.on("stream", (peerStream) => {
+    //                     console.log('calling the new peer --->>', peerStream);
+    //                     roomDispatch(addPeerStreamAction(peerId, peerStream)); 
+    //                 })
+    //             })                    
+    //         })
+    //     } catch(error) {
+    //         console.log(error);
+    //     }
+ 
+    // webSocketClient.on('room-created', enterRoom); 
+    // webSocketClient.on('get-roomies', getRoomies); 
+    // webSocketClient.on("user-disconnected", removePeer);         
+    // webSocketClient.on("user-started-sharing", (peerId) => setScreenSharingId(peerId)); 
+    // webSocketClient.on("user-stopped-sharing", () => setScreenSharingId("")); 
+    // webSocketClient.on("message-created", addMessage); 
+    // webSocketClient.on("get-messages", addHistory); 
+
+    // // me.on('open', (id) => {
+    // //     console.log('My peer ID is: ' + id);
+    // //     webSocketClient.emit('join-room', { roomId, peerId: id }); 
+    // // });
+
+    // // Cleanup function to disconnect WebSocket client and destroy PeerJS instance when component unmounts
+    
+}, [me, stream, username]);    
 
 useEffect(() => {
     if(screenSharingId){
@@ -160,8 +222,12 @@ useEffect(() => {
         stream,
         roomState,
         webSocketClient,
+        audioEnabled,
+        videoEnabled,
         setRoomId,
         sendMessage,
+        toggleAudio,
+        toggleVideo,
         shareScreen,        
         toggleChatVisibility,
     }
